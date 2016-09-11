@@ -10,6 +10,7 @@
     <script src="<?php echo base_url(); ?>path.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/jquery-1.12.4.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/bootstrap.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/calculate.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/global.js"></script>
 </head>
 <body>

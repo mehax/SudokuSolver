@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'db.mehax.info',
-	'username' => 'sudoku',
-	'password' => 'bQQ8HmRhR2B8yS7x',
+	'hostname' => 'localhost',
+	'username' => 'root',
+	'password' => '',//'bQQ8HmRhR2B8yS7x',
 	'database' => 'sudoku',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',

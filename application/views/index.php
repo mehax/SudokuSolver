@@ -116,6 +116,7 @@
     <div class="col-md-3">
         <div class="row">
             <button class="btn btn-success insert-js"><span class="glyphicon glyphicon-plus"></span> Insert</button>
+            <button class="btn btn-warning step-js"><span></span> Step</button>
         </div>
 
         <br>

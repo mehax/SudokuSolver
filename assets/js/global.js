@@ -62,6 +62,10 @@ function get_numbers(locked)
 
 $(document)
 
+.on('ready', 'html', function(){
+    ready();
+})
+
 .on('keydown', 'html', function(e){
     var element = $('.selected');
     var row     = element.data('row');
@@ -168,10 +172,17 @@ $(document)
                         element.addClass('locked');
                 }
 
+            ready();
+
             edit_mode = false;
             $('.edit-mode-js').text('false');
             $('.edit-mode-js').removeClass('text-danger');
             $('.edit-mode-js').addClass('text-success');
         }
-    })
+    });
+})
+
+.on('click', '.step-js', function(){
+    algo0();
+    algo1();
 })
