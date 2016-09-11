@@ -1,0 +1,38 @@
+.container{
+    margin-top:200px;
+}
+
+.element
+{
+    height:60px;
+    width:70px;
+    border: 1px solid black;
+    text-align:center;
+    font-size:30px;
+}
+
+.top{
+    border-top-width:4px;
+}
+
+.right{
+    border-right-width:4px;
+}
+.bottom{
+    border-bottom-width:4px;
+}
+.left{
+    border-left-width:4px;
+}
+
+.locked{
+    background-color:#aaa;
+}
+
+.highlighted{
+    background-color: rgba(0, 0, 255, 0.2);
+}
+
+.selected{
+    background-color: rgba(0, 255, 0, 0.2);
+}
