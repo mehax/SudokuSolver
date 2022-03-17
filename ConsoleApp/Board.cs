@@ -5,6 +5,12 @@ public class Board
     public int[,] Numbers = new int[9, 9];
     public List<int>[,] Marked = new List<int>[9, 9];
 
+    public Board(int[,] numbers, List<int>[,] marked)
+    {
+        Numbers = numbers;
+        Marked = marked;
+    }
+
     public Board(string content)
     {
         for (var i = 0; i < 9; i++)
@@ -39,6 +45,7 @@ public class Board
     public void SetNumber(int row, int col, int number, bool callEvent = true)
     {
         Numbers[row, col] = number;
+        Marked[row, col] = new();
 
         for (var i = 0; i < 9; i++)
         {
@@ -59,7 +66,7 @@ public class Board
 
         if (callEvent)
         {
-            Console.WriteLine($"Marked {number} on ({row}, {col})");
+            Console.WriteLine($"Added {number} on ({row}, {col})");
         }
     }
 
@@ -77,6 +84,37 @@ public class Board
         {
             Marked[row, col].Remove(number);
             return true;
+        }
+
+        return false;
+    }
+
+    public Board Clone()
+    {
+        var numbers = (int[,])Numbers.Clone();
+        var marked = new List<int>[9, 9];
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                marked[i, j] = Marked[i, j].ToList();
+            }
+        }
+
+        return new Board(numbers, marked);
+    }
+
+    public bool HasError()
+    {
+        for (var i = 0; i < 9; i++)
+        {
+            for (var j = 0; j < 9; j++)
+            {
+                if (Numbers[i, j] == 0 && !Marked[i, j].Any())
+                {
+                    return true;
+                }
+            }
         }
 
         return false;

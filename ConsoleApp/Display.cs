@@ -2,14 +2,7 @@ namespace ConsoleApp;
 
 public class Display
 {
-    private readonly Board mBoard;
-
-    public Display(Board board)
-    {
-        mBoard = board;
-    }
-
-    public void Print()
+    public void Print(Board board)
     {
         for (var row = 0; row < 9; row++)
         {
@@ -25,7 +18,7 @@ public class Display
                     Console.Write("|");
                 }
 
-                var nr = mBoard.Numbers[row, col] != 0 ? mBoard.Numbers[row, col].ToString() : " ";
+                var nr = board.Numbers[row, col] != 0 ? board.Numbers[row, col].ToString() : " ";
                 Console.Write($" {nr} ");
             }
 

@@ -2,19 +2,19 @@ namespace ConsoleApp;
 
 public class Solver
 {
-    private readonly Board mBoard;
+    private Board mBoard;
+    private List<Board> mBoardForBowman = new();
+    private List<(int row, int col, int nr)> mBowmanOptions = new();
     
     public Solver(Board board)
     {
-        mBoard = board;
+        mBoard = board.Clone();
     }
 
-    public void Run(Func<int> callback)
+    public Board Run()
     {
         while (true)
         {
-            callback();
-            
             if (Algo1())
             {
                 continue;
@@ -40,11 +40,18 @@ public class Solver
                 continue;
             }
 
+            if (BowmanBingo())
+            {
+                continue;
+            }
+
             break;
         }
+
+        return mBoard;
     }
 
-    public bool Algo1()
+    private bool Algo1()
     {
         var changed = false;
 
@@ -63,7 +70,7 @@ public class Solver
         return changed;
     }
 
-    public bool Algo2()
+    private bool Algo2()
     {
         var changed = false;
 
@@ -137,7 +144,7 @@ public class Solver
         return changed;
     }
 
-    public bool Algo3()
+    private bool Algo3()
     {
         var changed = false;
 
@@ -314,7 +321,7 @@ public class Solver
         return changed;
     }
 
-    public bool Algo4()
+    private bool Algo4()
     {
         var changed = false;
 
@@ -386,7 +393,7 @@ public class Solver
         return changed;
     }
 
-    public bool Algo5()
+    private bool Algo5()
     {
         var changed = false;
 
@@ -469,5 +476,49 @@ public class Solver
         }
 
         return changed;
+    }
+
+    private bool BowmanBingo()
+    {
+        if (mBoardForBowman.Any())
+        {
+            var last = mBoardForBowman.Last();
+            var lastOption = mBowmanOptions.Last();
+            if (mBoard.HasError())
+            {
+                last.Unmark(lastOption.row, lastOption.col, lastOption.nr);
+                mBoard = last;
+                mBoardForBowman.Remove(last);
+                mBowmanOptions.Remove(lastOption);
+                return true;
+            }
+        }
+
+        var options = GetDoubleOptions();
+        if (options == null)
+        {
+            return false;
+        }
+        
+        mBoardForBowman.Add(mBoard.Clone());
+        mBowmanOptions.Add(options.Value);
+        mBoard.SetNumber(options.Value.row, options.Value.col, options.Value.nr);
+        return true;
+    }
+
+    private (int row, int col, int nr)? GetDoubleOptions()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                if (mBoard.Numbers[i, j] == 0 && mBoard.Marked[i, j].Count == 2)
+                {
+                    return (i, j, mBoard.Marked[i, j].First());
+                }
+            }
+        }
+        
+        return null;
     }
 }
