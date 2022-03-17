@@ -63,7 +63,7 @@ public class Board
         }
     }
 
-    private void Mark(int row, int col, int number)
+    public void Mark(int row, int col, int number)
     {
         if (!Marked[row, col].Contains(number))
         {
@@ -71,9 +71,15 @@ public class Board
         }
     }
 
-    private void Unmark(int row, int col, int number)
+    public bool Unmark(int row, int col, int number)
     {
-        Marked[row, col].Remove(number);
+        if (Marked[row, col].Contains(number))
+        {
+            Marked[row, col].Remove(number);
+            return true;
+        }
+
+        return false;
     }
 
     private void ResetMarked()
