@@ -9,7 +9,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         builder =>
         {
-            builder.WithOrigins("https://www.usdoku.com", "https://usdoku.com");
+            builder.WithOrigins("https://www.usdoku.com", "https://usdoku.com", "https://www.livesudoku.com");
         });
 });
 
