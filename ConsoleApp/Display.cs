@@ -1,3 +1,5 @@
+using SudokuSolver.BLL;
+
 namespace ConsoleApp;
 
 public class Display

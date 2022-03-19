@@ -1,4 +1,4 @@
-namespace ConsoleApp;
+namespace SudokuSolver.BLL;
 
 public class Solver
 {

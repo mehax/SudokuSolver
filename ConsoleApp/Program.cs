@@ -1,4 +1,5 @@
 ﻿using ConsoleApp;
+using SudokuSolver.BLL;
 
 var game = File.ReadAllText("game.txt");
 var board = new Board(game);

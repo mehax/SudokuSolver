@@ -1,4 +1,4 @@
-namespace ConsoleApp;
+namespace SudokuSolver.BLL;
 
 public class Board
 {
@@ -99,7 +99,7 @@ public class Board
             Marked[row, col].Remove(number);
             if (mShouldNotify)
             {
-                OnNumberUnmarked(row, col, number, algorithm);
+                OnNumberUnmarked?.Invoke(row, col, number, algorithm);
             }
             return true;
         }
