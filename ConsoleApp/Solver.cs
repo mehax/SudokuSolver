@@ -8,7 +8,7 @@ public class Solver
     
     public Solver(Board board)
     {
-        mBoard = board.Clone();
+        mBoard = board;
     }
 
     public Board Run()
@@ -53,6 +53,7 @@ public class Solver
 
     private bool Algo1()
     {
+        var algorithm = nameof(Algo1);
         var changed = false;
 
         for (var i = 0; i < 9; i++)
@@ -61,7 +62,7 @@ public class Solver
             {
                 if (mBoard.Numbers[i, j] == 0 && mBoard.Marked[i, j].Count == 1)
                 {
-                    mBoard.SetNumber(i, j, mBoard.Marked[i, j].First());
+                    mBoard.SetNumber(i, j, mBoard.Marked[i, j].First(), algorithm);
                     changed = true;
                 }
             }
@@ -72,6 +73,7 @@ public class Solver
 
     private bool Algo2()
     {
+        var algorithm = nameof(Algo2);
         var changed = false;
 
         for (var number = 1; number <= 9; number++)
@@ -100,13 +102,13 @@ public class Solver
 
                 if (countCol == 1)
                 {
-                    mBoard.SetNumber(i, lastColIndex, number);
+                    mBoard.SetNumber(i, lastColIndex, number, algorithm);
                     changed = true;
                 }
 
                 if (countRow == 1)
                 {
-                    mBoard.SetNumber(lastRowIndex, i, number);
+                    mBoard.SetNumber(lastRowIndex, i, number, algorithm);
                     changed = true;
                 }
             }
@@ -135,7 +137,7 @@ public class Solver
 
                 if (count == 1)
                 {
-                    mBoard.SetNumber(lastRowIndex, lastColIndex, number);
+                    mBoard.SetNumber(lastRowIndex, lastColIndex, number, algorithm);
                     changed = true;
                 }
             }
@@ -146,6 +148,7 @@ public class Solver
 
     private bool Algo3()
     {
+        var algorithm = nameof(Algo3);
         var changed = false;
 
         for (var nr1 = 1; nr1 <= 9; nr1++)
@@ -191,8 +194,8 @@ public class Solver
                                 continue;
                             }
 
-                            if (mBoard.Unmark(i, rowPos[0], nr)) changed = true;
-                            if (mBoard.Unmark(i, rowPos[1], nr)) changed = true;
+                            if (mBoard.Unmark(i, rowPos[0], nr, algorithm)) changed = true;
+                            if (mBoard.Unmark(i, rowPos[1], nr, algorithm)) changed = true;
                         }
                     }
                 }
@@ -236,8 +239,8 @@ public class Solver
                                 continue;
                             }
 
-                            if (mBoard.Unmark(colPos[0], i, nr)) changed = true;
-                            if (mBoard.Unmark(colPos[1], i, nr)) changed = true;
+                            if (mBoard.Unmark(colPos[0], i, nr, algorithm)) changed = true;
+                            if (mBoard.Unmark(colPos[1], i, nr, algorithm)) changed = true;
                         }
                     }
                 }
@@ -306,7 +309,7 @@ public class Solver
                             positions.ForEach(pos =>
                             {
                                 
-                                var v = mBoard.Unmark(pos.row, pos.col, skip);
+                                var v = mBoard.Unmark(pos.row, pos.col, skip, algorithm);
                                 if (v)
                                 {
                                     changed = true;
@@ -323,6 +326,7 @@ public class Solver
 
     private bool Algo4()
     {
+        var algorithm = nameof(Algo4);
         var changed = false;
 
         for (var nr = 1; nr <= 9; nr++)
@@ -368,8 +372,8 @@ public class Solver
                                 continue;
                             }
 
-                            if (mBoard.Unmark(k, row1[0], nr)) changed = true;
-                            if (mBoard.Unmark(k, row1[1], nr)) changed = true;
+                            if (mBoard.Unmark(k, row1[0], nr, algorithm)) changed = true;
+                            if (mBoard.Unmark(k, row1[1], nr, algorithm)) changed = true;
                         }
                     }
 
@@ -382,8 +386,8 @@ public class Solver
                                 continue;
                             }
 
-                            if (mBoard.Unmark(col1[0], k, nr)) changed = true;
-                            if (mBoard.Unmark(col1[1], k, nr)) changed = true;
+                            if (mBoard.Unmark(col1[0], k, nr, algorithm)) changed = true;
+                            if (mBoard.Unmark(col1[1], k, nr, algorithm)) changed = true;
                         }
                     }
                 }
@@ -395,6 +399,7 @@ public class Solver
 
     private bool Algo5()
     {
+        var algorithm = nameof(Algo5);
         var changed = false;
 
         for (var nr = 1; nr <= 9; nr++)
@@ -452,7 +457,7 @@ public class Solver
                             continue;
                         }
 
-                        if (mBoard.Unmark(row, col, nr)) changed = true;
+                        if (mBoard.Unmark(row, col, nr, algorithm)) changed = true;
                     }
                 }
 
@@ -469,7 +474,7 @@ public class Solver
                             continue;
                         }
 
-                        if (mBoard.Unmark(row, col, nr)) changed = true;
+                        if (mBoard.Unmark(row, col, nr, algorithm)) changed = true;
                     }
                 }
             }
@@ -480,16 +485,34 @@ public class Solver
 
     private bool BowmanBingo()
     {
+        var algorithm = nameof(BowmanBingo);
         if (mBoardForBowman.Any())
         {
             var last = mBoardForBowman.Last();
             var lastOption = mBowmanOptions.Last();
             if (mBoard.HasError())
             {
-                last.Unmark(lastOption.row, lastOption.col, lastOption.nr);
-                mBoard = last;
                 mBoardForBowman.Remove(last);
                 mBowmanOptions.Remove(lastOption);
+                mBoard.ReInit(last);
+                if (!mBoardForBowman.Any())
+                {
+                    mBoard.StartNotifications();
+                }
+                mBoard.Unmark(lastOption.row, lastOption.col, lastOption.nr, algorithm);
+                return true;
+            }
+
+            if (mBoard.IsWin())
+            {
+                mBoardForBowman.Remove(last);
+                mBowmanOptions.Remove(lastOption);
+                mBoard.ReInit(last);
+                if (!mBoardForBowman.Any())
+                {
+                    mBoard.StartNotifications();
+                }
+                mBoard.SetNumber(lastOption.row, lastOption.col, lastOption.nr, algorithm);
                 return true;
             }
         }
@@ -499,10 +522,11 @@ public class Solver
         {
             return false;
         }
-        
+
         mBoardForBowman.Add(mBoard.Clone());
         mBowmanOptions.Add(options.Value);
-        mBoard.SetNumber(options.Value.row, options.Value.col, options.Value.nr);
+        mBoard.StopNotifications();
+        mBoard.SetNumber(options.Value.row, options.Value.col, options.Value.nr, algorithm);
         return true;
     }
 

@@ -4,11 +4,17 @@ public class Board
 {
     public int[,] Numbers = new int[9, 9];
     public List<int>[,] Marked = new List<int>[9, 9];
+    private bool mShouldNotify;
 
-    public Board(int[,] numbers, List<int>[,] marked)
+    public delegate void BoardUpdated(int row, int col, int number, string? algorithm);
+    public event BoardUpdated? OnNumberSet;
+    public event BoardUpdated? OnNumberUnmarked;
+
+    public Board(int[,] numbers, List<int>[,] marked, bool shouldNotify)
     {
         Numbers = numbers;
         Marked = marked;
+        mShouldNotify = shouldNotify;
     }
 
     public Board(string content)
@@ -36,21 +42,29 @@ public class Board
 
                 if (nr != 0)
                 {
-                    SetNumber(row, col, nr, false);
+                    SetNumber(row, col, nr, null);
                 }
             }
         }
+
+        mShouldNotify = true;
     }
 
-    public void SetNumber(int row, int col, int number, bool callEvent = true)
+    public void ReInit(Board board)
+    {
+        Numbers = board.Numbers;
+        Marked = board.Marked;
+    }
+
+    public void SetNumber(int row, int col, int number, string? algorithm)
     {
         Numbers[row, col] = number;
         Marked[row, col] = new();
 
         for (var i = 0; i < 9; i++)
         {
-            Unmark(row, i, number);
-            Unmark(i, col, number);
+            Unmark(row, i, number, algorithm);
+            Unmark(i, col, number, algorithm);
         }
 
         for (var i = 0; i < 3; i++)
@@ -60,13 +74,13 @@ public class Board
                 var r = i + row / 3 * 3;
                 var c = j + col / 3 * 3;
 
-                Unmark(r, c, number);
+                Unmark(r, c, number, algorithm);
             }
         }
 
-        if (callEvent)
+        if (mShouldNotify)
         {
-            Console.WriteLine($"Added {number} on ({row}, {col})");
+            OnNumberSet?.Invoke(row, col, number, algorithm);
         }
     }
 
@@ -78,11 +92,15 @@ public class Board
         }
     }
 
-    public bool Unmark(int row, int col, int number)
+    public bool Unmark(int row, int col, int number, string? algorithm)
     {
         if (Marked[row, col].Contains(number))
         {
             Marked[row, col].Remove(number);
+            if (mShouldNotify)
+            {
+                OnNumberUnmarked(row, col, number, algorithm);
+            }
             return true;
         }
 
@@ -101,7 +119,7 @@ public class Board
             }
         }
 
-        return new Board(numbers, marked);
+        return new Board(numbers, marked, false);
     }
 
     public bool HasError()
@@ -118,6 +136,32 @@ public class Board
         }
 
         return false;
+    }
+
+    public bool IsWin()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                if (Numbers[i, j] == 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void StopNotifications()
+    {
+        mShouldNotify = false;
+    }
+
+    public void StartNotifications()
+    {
+        mShouldNotify = true;
     }
 
     private void ResetMarked()
