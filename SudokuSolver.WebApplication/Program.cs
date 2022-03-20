@@ -19,13 +19,13 @@ app.UseCors(MyAllowSpecificOrigins);
 app.MapGet("/", ([FromQuery][Required] string game) =>
 {
     var positions = new List<Position>();
-    var board = new Board(game);
+    IBoard board = FactoryService.CreateBoard().Init(game);
     board.OnNumberSet += (row, col, number, _) =>
     {
         positions.Add(new(row, col, number));
     };
     
-    var solver = new Solver(board);
+    ISolver solver = FactoryService.CreateSolver().Init(board);
     solver.Run();
 
     return positions;

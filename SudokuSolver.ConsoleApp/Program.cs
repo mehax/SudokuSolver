@@ -2,8 +2,8 @@
 using SudokuSolver.BLL;
 
 var game = File.ReadAllText("game.txt");
-var board = new Board(game);
-var solver = new Solver(board);
+IBoard board = FactoryService.CreateBoard().Init(game);
+ISolver solver = FactoryService.CreateSolver().Init(board);
 var display = new Display();
 
 board.OnNumberSet += (row, col, number, algorithm) =>

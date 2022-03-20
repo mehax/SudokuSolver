@@ -1,10 +1,11 @@
 using SudokuSolver.BLL;
+using SudokuSolver.BLL.Internal;
 
 namespace SudokuSolver.ConsoleApp;
 
 public class Display
 {
-    public void Print(Board board)
+    public void Print(IBoard board)
     {
         for (var row = 0; row < 9; row++)
         {
@@ -20,7 +21,7 @@ public class Display
                     Console.Write("|");
                 }
 
-                var nr = board.Numbers[row, col] != 0 ? board.Numbers[row, col].ToString() : " ";
+                var nr = board.GetNumberAtPosition(row, col) != 0 ? board.GetNumberAtPosition(row, col).ToString() : " ";
                 Console.Write($" {nr} ");
             }
 

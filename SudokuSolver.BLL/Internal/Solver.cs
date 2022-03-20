@@ -1,20 +1,28 @@
-namespace SudokuSolver.BLL;
+namespace SudokuSolver.BLL.Internal;
 
-public class Solver
+internal class Solver : ISolver
 {
-    private Board mBoard;
-    private List<Board> mBoardForBowman = new();
-    private List<(int row, int col, int nr)> mBowmanOptions = new();
+    private IBoard mBoard;
+    private readonly List<IBoard> mBoardForBowman = new();
+    private readonly List<(int row, int col, int nr)> mBowmanOptions = new();
     
-    public Solver(Board board)
+    public ISolver Init(IBoard board)
     {
         mBoard = board;
+        return this;
     }
 
-    public Board Run()
+    public void Run(int? steps = null)
     {
+        var step = 0;
         while (true)
         {
+            if (steps != null && step >= steps)
+            {
+                break;
+            }
+
+            step++;
             if (Algo1())
             {
                 continue;
@@ -47,8 +55,6 @@ public class Solver
 
             break;
         }
-
-        return mBoard;
     }
 
     private bool Algo1()
@@ -60,9 +66,9 @@ public class Solver
         {
             for (var j = 0; j < 9; j++)
             {
-                if (mBoard.Numbers[i, j] == 0 && mBoard.Marked[i, j].Count == 1)
+                if (mBoard.GetNumberAtPosition(i, j) == 0 && mBoard.GetMarkedAtPosition(i, j).Count == 1)
                 {
-                    mBoard.SetNumber(i, j, mBoard.Marked[i, j].First(), algorithm);
+                    mBoard.SetNumber(i, j, mBoard.GetMarkedAtPosition(i, j).First(), algorithm);
                     changed = true;
                 }
             }
@@ -87,13 +93,13 @@ public class Solver
 
                 for (var j = 0; j < 9; j++)
                 {
-                    if (mBoard.Numbers[i, j] == 0 && mBoard.Marked[i, j].Contains(number))
+                    if (mBoard.GetNumberAtPosition(i, j) == 0 && mBoard.GetMarkedAtPosition(i, j).Contains(number))
                     {
                         countCol++;
                         lastColIndex = j;
                     }
 
-                    if (mBoard.Numbers[j, i] == 0 && mBoard.Marked[j, i].Contains(number))
+                    if (mBoard.GetNumberAtPosition(i, j) == 0 && mBoard.GetMarkedAtPosition(j, i).Contains(number))
                     {
                         countRow++;
                         lastRowIndex = j;
@@ -126,7 +132,7 @@ public class Solver
                         var row = i + block / 3 * 3;
                         var col = j + block % 3 * 3;
 
-                        if (mBoard.Numbers[row, col] == 0 && mBoard.Marked[row, col].Contains(number))
+                        if (mBoard.GetNumberAtPosition(row, col) == 0 && mBoard.GetMarkedAtPosition(row, col).Contains(number))
                         {
                             lastRowIndex = row;
                             lastColIndex = col;
@@ -163,13 +169,13 @@ public class Solver
 
                     for (int j = 0; j < 9; j++)
                     {
-                        if (mBoard.Numbers[i, j] != 0)
+                        if (mBoard.GetNumberAtPosition(i, j) != 0)
                         {
                             continue;
                         }
 
-                        var first = mBoard.Marked[i, j].Contains(nr1);
-                        var second = mBoard.Marked[i, j].Contains(nr2);
+                        var first = mBoard.GetMarkedAtPosition(i, j).Contains(nr1);
+                        var second = mBoard.GetMarkedAtPosition(i, j).Contains(nr2);
                         
                         if (first != second)
                         {
@@ -208,13 +214,13 @@ public class Solver
 
                     for (int j = 0; j < 9; j++)
                     {
-                        if (mBoard.Numbers[j, i] != 0)
+                        if (mBoard.GetNumberAtPosition(j, i) != 0)
                         {
                             continue;
                         }
                         
-                        var first = mBoard.Marked[j, i].Contains(nr1);
-                        var second = mBoard.Marked[j, i].Contains(nr2);
+                        var first = mBoard.GetMarkedAtPosition(j, i).Contains(nr1);
+                        var second = mBoard.GetMarkedAtPosition(j, i).Contains(nr2);
 
                         if (first != second)
                         {
@@ -263,19 +269,19 @@ public class Solver
                             var row = block / 3 * 3 + i;
                             var col = block % 3 * 3 + j;
 
-                            if (mBoard.Numbers[row, col] == nr1 || mBoard.Numbers[row, col] == nr2)
+                            if (mBoard.GetNumberAtPosition(row, col) == nr1 || mBoard.GetNumberAtPosition(row, col) == nr2)
                             {
                                 shouldContinue = true;
                                 break;
                             }
 
-                            if (mBoard.Numbers[row, col] != 0)
+                            if (mBoard.GetNumberAtPosition(row, col) != 0)
                             {
                                 continue;
                             }
 
-                            var first = mBoard.Marked[row, col].Contains(nr1);
-                            var second = mBoard.Marked[row, col].Contains(nr2);
+                            var first = mBoard.GetMarkedAtPosition(row, col).Contains(nr1);
+                            var second = mBoard.GetMarkedAtPosition(row, col).Contains(nr2);
 
                             if (first != second)
                             {
@@ -342,22 +348,22 @@ public class Solver
 
                     for (var k = 0; k < 9; k++)
                     {
-                        if (mBoard.Numbers[i, k] == 0 && mBoard.Marked[i, k].Contains(nr))
+                        if (mBoard.GetNumberAtPosition(i, k) == 0 && mBoard.GetMarkedAtPosition(i, k).Contains(nr))
                         {
                             row1.Add(k);
                         }
                         
-                        if (mBoard.Numbers[j, k] == 0 && mBoard.Marked[j, k].Contains(nr))
+                        if (mBoard.GetNumberAtPosition(j, k) == 0 && mBoard.GetMarkedAtPosition(j, k).Contains(nr))
                         {
                             row2.Add(k);
                         }
                         
-                        if (mBoard.Numbers[k, i] == 0 && mBoard.Marked[k, i].Contains(nr))
+                        if (mBoard.GetNumberAtPosition(k, i) == 0 && mBoard.GetMarkedAtPosition(k, i).Contains(nr))
                         {
                             col1.Add(k);
                         }
                         
-                        if (mBoard.Numbers[k, j] == 0 && mBoard.Marked[k, j].Contains(nr))
+                        if (mBoard.GetNumberAtPosition(k, j) == 0 && mBoard.GetMarkedAtPosition(k, j).Contains(nr))
                         {
                             col2.Add(k);
                         }
@@ -416,9 +422,9 @@ public class Solver
                         var row = i + block / 3 * 3;
                         var col = j + block % 3 * 3;
 
-                        if (mBoard.Numbers[row, col] != 0)
+                        if (mBoard.GetNumberAtPosition(row, col) != 0)
                         {
-                            if (mBoard.Numbers[row, col] == nr)
+                            if (mBoard.GetNumberAtPosition(row, col) == nr)
                             {
                                 shouldContinue = true;
                                 break;
@@ -427,7 +433,7 @@ public class Solver
                             continue;
                         }
 
-                        if (mBoard.Marked[row, col].Contains(nr))
+                        if (mBoard.GetMarkedAtPosition(row, col).Contains(nr))
                         {
                             positions.Add((row, col));
                         }
@@ -536,9 +542,9 @@ public class Solver
         {
             for (int j = 0; j < 9; j++)
             {
-                if (mBoard.Numbers[i, j] == 0 && mBoard.Marked[i, j].Count == 2)
+                if (mBoard.GetNumberAtPosition(i, j) == 0 && mBoard.GetMarkedAtPosition(i, j).Count == 2)
                 {
-                    return (i, j, mBoard.Marked[i, j].First());
+                    return (i, j, mBoard.GetMarkedAtPosition(i, j).First());
                 }
             }
         }
