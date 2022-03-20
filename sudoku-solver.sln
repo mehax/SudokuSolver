@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{03474DA7-1C4E-4FFC-A759-0C4810AA94E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.ConsoleApp", "SudokuSolver.ConsoleApp\SudokuSolver.ConsoleApp.csproj", "{03474DA7-1C4E-4FFC-A759-0C4810AA94E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.BLL", "SudokuSolver.BLL\SudokuSolver.BLL.csproj", "{AB528C91-E09E-4D2C-8C2A-FC7061781BF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "WebApplication\WebApplication.csproj", "{28C51756-DA77-4D7A-A22A-8D4F189672FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.WebApplication", "SudokuSolver.WebApplication\SudokuSolver.WebApplication.csproj", "{28C51756-DA77-4D7A-A22A-8D4F189672FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 using SudokuSolver.BLL;
 
-namespace ConsoleApp;
+namespace SudokuSolver.ConsoleApp;
 
 public class Display
 {
