@@ -1,6 +1,6 @@
 // ! Make sure to select (press) the first cell of the board
 
-const keypressTimer = 100;
+const keypressTimer = 200;
 async function run(data)
 {
     console.table(data);
