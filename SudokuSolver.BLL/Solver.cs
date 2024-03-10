@@ -5,7 +5,7 @@ public class Solver
     private Board mBoard;
     private List<Board> mBoardForBowman = new();
     private List<(int row, int col, int nr)> mBowmanOptions = new();
-    
+
     public Solver(Board board)
     {
         mBoard = board;
@@ -71,7 +71,7 @@ public class Solver
                 }
             }
         }
-        
+
         return changed;
     }
 
@@ -149,7 +149,7 @@ public class Solver
                 }
             }
         }
-        
+
         return changed;
     }
 
@@ -181,19 +181,19 @@ public class Solver
 
                         var first = mBoard.Marked[i, j].Contains(nr1);
                         var second = mBoard.Marked[i, j].Contains(nr2);
-                        
+
                         if (first != second)
                         {
                             shouldContinue = true;
                             break;
                         }
-                        
+
                         if (first && second)
                         {
                             rowPos.Add(j);
                         }
                     }
-                    
+
                     if (shouldContinue) continue;
 
                     if (rowPos.Count == 2)
@@ -210,7 +210,7 @@ public class Solver
                         }
                     }
                 }
-                
+
                 // cols
                 for (int i = 0; i < 9; i++)
                 {
@@ -223,7 +223,7 @@ public class Solver
                         {
                             continue;
                         }
-                        
+
                         var first = mBoard.Marked[j, i].Contains(nr1);
                         var second = mBoard.Marked[j, i].Contains(nr2);
 
@@ -232,13 +232,13 @@ public class Solver
                             shouldContinue = true;
                             break;
                         }
-                        
+
                         if (first && second)
                         {
                             colPos.Add(j);
                         }
                     }
-                    
+
                     if (shouldContinue) continue;
 
                     if (colPos.Count == 2)
@@ -316,10 +316,9 @@ public class Solver
                             {
                                 continue;
                             }
-                            
+
                             positions.ForEach(pos =>
                             {
-                                
                                 var v = mBoard.Unmark(pos.row, pos.col, skip, algorithm);
                                 if (v)
                                 {
@@ -361,17 +360,17 @@ public class Solver
                         {
                             row1.Add(k);
                         }
-                        
+
                         if (mBoard.Numbers[j, k] == 0 && mBoard.Marked[j, k].Contains(nr))
                         {
                             row2.Add(k);
                         }
-                        
+
                         if (mBoard.Numbers[k, i] == 0 && mBoard.Marked[k, i].Contains(nr))
                         {
                             col1.Add(k);
                         }
-                        
+
                         if (mBoard.Numbers[k, j] == 0 && mBoard.Marked[k, j].Contains(nr))
                         {
                             col2.Add(k);
@@ -522,6 +521,7 @@ public class Solver
                 {
                     mBoard.StartNotifications();
                 }
+
                 mBoard.Unmark(lastOption.row, lastOption.col, lastOption.nr, algorithm);
                 return true;
             }
@@ -535,6 +535,7 @@ public class Solver
                 {
                     mBoard.StartNotifications();
                 }
+
                 mBoard.SetNumber(lastOption.row, lastOption.col, lastOption.nr, algorithm);
                 return true;
             }
@@ -553,6 +554,108 @@ public class Solver
         return true;
     }
 
+    /// <summary>
+    /// This technique looks for rows (or columns) where a number appears as a candidate in exactly two cells and these cells line up exactly in two rows (or columns). If an X-Wing is found, the number can be removed from the candidates of all other cells in the columns (or rows).
+    /// </summary>
+    /// <returns></returns>
+    private bool XWing()
+    {
+        var algorithm = nameof(XWing);
+        var changed = false;
+
+        // Check rows for X-Wing pattern
+        for (var num = 1; num <= 9; num++)
+        {
+            for (var row1 = 0; row1 < 8; row1++)
+            {
+                for (var row2 = row1 + 1; row2 < 9; row2++)
+                {
+                    var colsInRow1 = FindCandidateColumnsForRow(num, row1);
+                    var colsInRow2 = FindCandidateColumnsForRow(num, row2);
+
+                    if (colsInRow1.Count != 2 || !colsInRow1.SequenceEqual(colsInRow2)) continue;
+                    
+                    // Found X-Wing pattern, remove num from other cells in these columns
+                    for (var row = 0; row < 9; row++)
+                    {
+                        if (row == row1 || row == row2) continue;
+                        foreach (var col in colsInRow1)
+                        {
+                            if (mBoard.Unmark(row, col, num, algorithm)) changed = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Similar logic for columns, swapping row and column loops
+
+        return changed;
+    }
+    
+    /// <summary>
+    /// An extension of the X-Wing technique, Swordfish involves three rows (or columns) and three columns (or rows) where a number appears as a candidate in exactly two or three cells in each of the three rows (or columns), and these cells form a rectangle or an irregular shape. This configuration allows the number to be removed from other cells in the involved columns (or rows).
+    /// </summary>
+    /// <returns></returns>
+    bool Swordfish()
+    {
+        var algorithm = nameof(Swordfish);
+        var changed = false;
+
+        // Check rows for Swordfish pattern
+        for (var num = 1; num <= 9; num++)
+        {
+            for (var row1 = 0; row1 < 7; row1++)
+            {
+                for (var row2 = row1 + 1; row2 < 8; row2++)
+                {
+                    for (var row3 = row2 + 1; row3 < 9; row3++)
+                    {
+                        var cols = new HashSet<int>(FindCandidateColumnsForRow(num, row1));
+                        cols.UnionWith(FindCandidateColumnsForRow(num, row2));
+                        cols.UnionWith(FindCandidateColumnsForRow(num, row3));
+
+                        if (cols.Count != 3) continue;
+                        
+                        // Found Swordfish pattern, remove num from other cells in these columns
+                        for (var row = 0; row < 9; row++)
+                        {
+                            if (row == row1 || row == row2 || row == row3) continue;
+
+                            foreach (var col in cols)
+                            {
+                                if (mBoard.Unmark(row, col, num, algorithm)) changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Similar logic for columns, swapping row and column loops
+
+        return changed;
+    }
+
+
+    private List<int> FindCandidateColumnsForRow(int number, int row)
+    {
+        var candidateColumns = new List<int>();
+
+        // Assume mBoard.Marked[row, col] holds the set of candidate numbers for each cell
+        for (var col = 0; col < 9; col++)
+        {
+            // Check if 'number' is a candidate in the cell at (row, col)
+            if (mBoard.Marked[row, col].Contains(number))
+            {
+                candidateColumns.Add(col);
+            }
+        }
+
+        return candidateColumns;
+    }
+    
+
     private (int row, int col, int nr)? GetDoubleOptions()
     {
         for (int i = 0; i < 9; i++)
@@ -565,7 +668,7 @@ public class Solver
                 }
             }
         }
-        
+
         return null;
     }
 }

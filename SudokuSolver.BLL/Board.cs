@@ -92,7 +92,7 @@ public class Board
         }
     }
 
-    public bool Unmark(int row, int col, int number, string? algorithm)
+    public bool Unmark(int row, int col, int number, string? algorithm = null)
     {
         if (Marked[row, col].Contains(number))
         {
