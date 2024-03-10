@@ -15,27 +15,27 @@ public class Solver
     {
         while (true)
         {
-            if (Algo1())
+            if (SingleCandidate())
             {
                 continue;
             }
 
-            if (Algo2())
+            if (SinglePosition())
             {
                 continue;
             }
 
-            if (Algo3())
+            if (LockedPairs())
             {
                 continue;
             }
 
-            if (Algo4())
+            if (PointingTriples())
             {
                 continue;
             }
 
-            if (Algo5())
+            if (BoxLineReduction())
             {
                 continue;
             }
@@ -51,9 +51,13 @@ public class Solver
         return mBoard;
     }
 
-    private bool Algo1()
+    /// <summary>
+    /// This appears to be the "Single Candidate" or "Naked Singles" technique. It finds cells where only one number is possible (i.e., only one candidate number is left for that cell) and fills in those cells with the respective number.
+    /// </summary>
+    /// <returns></returns>
+    private bool SingleCandidate()
     {
-        var algorithm = nameof(Algo1);
+        var algorithm = nameof(SingleCandidate);
         var changed = false;
 
         for (var i = 0; i < 9; i++)
@@ -71,9 +75,12 @@ public class Solver
         return changed;
     }
 
-    private bool Algo2()
+    /// <summary>
+    /// </summary>
+    /// <returns></returns>
+    private bool SinglePosition()
     {
-        var algorithm = nameof(Algo2);
+        var algorithm = nameof(SinglePosition);
         var changed = false;
 
         for (var number = 1; number <= 9; number++)
@@ -146,9 +153,13 @@ public class Solver
         return changed;
     }
 
-    private bool Algo3()
+    /// <summary>
+    /// This might be the "Pointing Pairs" or "Pointing Triples" technique. It involves identifying when candidates in a block point to a single row or column, allowing for the elimination of those candidates from other cells in that row or column outside of the block.
+    /// </summary>
+    /// <returns></returns>
+    private bool LockedPairs()
     {
-        var algorithm = nameof(Algo3);
+        var algorithm = nameof(LockedPairs);
         var changed = false;
 
         for (var nr1 = 1; nr1 <= 9; nr1++)
@@ -324,9 +335,13 @@ public class Solver
         return changed;
     }
 
-    private bool Algo4()
+    /// <summary>
+    /// This seems to be a form of "Naked Pairs" or "Locked Pairs". When two cells in a row, column, or block can only contain the same two numbers, those two numbers can be removed from the candidates list of all other cells in the same row, column, or block.
+    /// </summary>
+    /// <returns></returns>
+    private bool PointingTriples()
     {
-        var algorithm = nameof(Algo4);
+        var algorithm = nameof(PointingTriples);
         var changed = false;
 
         for (var nr = 1; nr <= 9; nr++)
@@ -397,9 +412,13 @@ public class Solver
         return changed;
     }
 
-    private bool Algo5()
+    /// <summary>
+    /// This could be related to the "Box Line Reduction" or "Line-Box" technique. If a number can only appear in a row or column within a specific block, you can remove that number from the candidates in the same row or column in other blocks.
+    /// </summary>
+    /// <returns></returns>
+    private bool BoxLineReduction()
     {
-        var algorithm = nameof(Algo5);
+        var algorithm = nameof(BoxLineReduction);
         var changed = false;
 
         for (var nr = 1; nr <= 9; nr++)
@@ -483,6 +502,10 @@ public class Solver
         return changed;
     }
 
+    /// <summary>
+    /// This is a brute force technique, also known as "Bowman's Bingo," used as a last resort. It involves making a guess between two possible numbers for a cell, then continuing to solve the puzzle until a contradiction is found, indicating the guess was incorrect, or the puzzle is solved, confirming the guess was correct.
+    /// </summary>
+    /// <returns></returns>
     private bool BowmanBingo()
     {
         var algorithm = nameof(BowmanBingo);
