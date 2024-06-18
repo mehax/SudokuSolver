@@ -2,11 +2,11 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using SudokuSolver.BLL;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: myAllowSpecificOrigins,
         builder =>
         {
             builder.WithOrigins("https://www.usdoku.com", "https://usdoku.com", "https://www.livesudoku.com");
@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 
 app.MapGet("/", ([FromQuery][Required] string game) =>
 {

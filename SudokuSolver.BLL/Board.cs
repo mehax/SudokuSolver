@@ -31,7 +31,7 @@ public class Board
             }
         }
         
-        content = content.Replace("\n", "");
+        content = content.Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", "");
         var index = 0;
         for (var row = 0; row < 9; row++)
         {

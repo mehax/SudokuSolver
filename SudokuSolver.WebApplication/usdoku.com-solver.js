@@ -4,8 +4,8 @@ const keypressTimer = 200;
 const maxMoves = 99;
 
 async function run(data) {
-    console.table(data);
-    // return;
+    print(data);
+    return;
     let lastRow = 0;
     let lastCol = 0;
     let index = 0;
@@ -21,6 +21,15 @@ async function run(data) {
     }
     
     await executeStep(lastRow, lastCol, data[0]);
+}
+
+function print(data) {
+    console.table(data.map(x => ({
+        row: x.row + 1,
+        col: x.col + 1,
+        number: x.number,
+        algorithm: x.algorithm,
+    })));
 }
 
 async function executeStep(lastRow, lastCol, pos) {
